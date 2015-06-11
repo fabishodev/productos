@@ -26,11 +26,11 @@
 						$sql = "SELECT id_categoria,nombre_categoria FROM categorias where id_categoria != 0"; //Selecciona los titulos del menu -->
 						$result = mysqli_query($con,$sql);
 						while($menu = mysqli_fetch_row($result)) {
-							echo "<div class='panel-group' id='accordion' role='tablist' aria-multiselectable='true'>
+							echo "<div class='panel-group' id='accordion".$menu[0]."' role='tablist' aria-multiselectable='true'>
 							  <div class='panel panel-default'>
 							    <div class='panel-heading' role='tab' id='heading".$menu[0]."'>
 							      <h4 class='panel-title'>
-							        <a data-toggle='collapse' data-parent='#accordion' href='#collapse".$menu[0]."' aria-expanded='true' aria-controls='collapse".$menu[0]."'>
+							        <a data-toggle='collapse' data-parent='#accordion".$menu[0]."' href='#collapse".$menu[0]."' aria-expanded='true' aria-controls='collapse".$menu[0]."'>
 											";echo $menu[1];
 							        echo "</a>
 							      </h4>
@@ -50,11 +50,6 @@
 							    </div>
 							  </div>
 							</div>";
-
-
-
-
-
 						}
 
 						?>
