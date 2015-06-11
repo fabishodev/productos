@@ -12,48 +12,51 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="page-header">
-						<h1>Productos <small>Subtext for header</small></h1>
+						<h1>Productos <small></small></h1>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="container">
 			<div class="row">
-				<div class="col-lg-6">		
-
-
+				<div class="col-lg-6">
 					<div id="menu">
 						<?php
 						include("mysql.php"); //Incluimos los datos de la conexion de base de datos
-						$menu_sql = mysql_query("SELECT id_categoria,nombre_categoria FROM categorias where id_categoria != 0"); //Selecciona los titulos del menu
-						while($menu = mysql_fetch_row($menu_sql)) //Entregara los datos en forma de $menu[numero], empezando con el 0
-						{  //Repetira el siguiente echo con todos los datos de la consulta
-						echo '        <ul>
-									<li>
-												<a  href="#">'.$menu[1].'</a>'; //Se usa el '. .' para "pausar" el echo y mostrar una variable acompañada siempre por puntos.
-												$submenu_sql = mysql_query("SELECT id_producto,producto,categoria FROM productos WHERE categoria = '".$menu[0]."'"); //Selecciona los subsmenu con la condición de mostrar en el menu que corresponda (Por id)
-												if(mysql_num_rows($submenu_sql) > 0) //Si la cantidad de filas que muestra la consulta es mayor a 0 imprimiria lo siguiente ( echo )
-												{
-												echo '
-												<div>
-															<ul>';
-																		while($submenu = mysql_fetch_row($submenu_sql))
-																		{
-																		echo '
-																		<li><a onclick="getProduct('.$submenu[0].')" href="#">'.$submenu[1].' </a></li>';
-																		}
-																		mysql_free_result($submenu_sql); //Liberamos memoria para no saturar el servidor, si es muy visitado, pero siempre es mejor tomar precauciones :)
-																		echo '
-															</ul>
-												</div>';
-												}
-												echo '
-									</li>
-						</ul>
-						';
+						$sql = "SELECT id_categoria,nombre_categoria FROM categorias where id_categoria != 0"; //Selecciona los titulos del menu -->
+						$result = mysqli_query($con,$sql);
+						while($menu = mysqli_fetch_row($result)) {
+							echo "<div class='panel-group' id='accordion' role='tablist' aria-multiselectable='true'>
+							  <div class='panel panel-default'>
+							    <div class='panel-heading' role='tab' id='heading".$menu[0]."'>
+							      <h4 class='panel-title'>
+							        <a data-toggle='collapse' data-parent='#accordion' href='#collapse".$menu[0]."' aria-expanded='true' aria-controls='collapse".$menu[0]."'>
+											";echo $menu[1];
+							        echo "</a>
+							      </h4>
+							    </div>
+							    <div id='collapse".$menu[0]."' class='panel-collapse collapse out' role='tabpanel' aria-labelledby='heading".$menu[0]."'>
+							      <div class='panel-body'>";
+										$sql_submenu = "SELECT id_producto,producto,categoria FROM productos WHERE categoria = '".$menu[0]."'";
+										$result_submenu = mysqli_query($con,$sql_submenu);
+										if (mysqli_num_rows($result_submenu) > 0) {
+											echo "<div><ul>";
+											while($submenu = mysqli_fetch_row($result_submenu)) {
+												echo "<li><a onclick='getProduct(".$submenu[0].")' href='#'>".$submenu[1]." </a></li>";
+											}
+											echo "</ul></div>";
+										}
+							      echo "</div>
+							    </div>
+							  </div>
+							</div>";
+
+
+
+
+
 						}
-						mysql_free_result($menu_sql); //Aqui tambien liberamos la memoria en la consulta del menu
-						mysql_close(); //Cerramos la conexion a la db
+
 						?>
 					</div>
 				</div>
@@ -62,8 +65,8 @@
 				</div>
 			</div>
 		</div>
-		
-		
+
+
 	</body>
 </html>
 <script>
@@ -73,7 +76,7 @@ function getProduct(str){
 		url:"Products.php",
 		data: {"id": str}
 		}).done(function(data){
-		
+
 		$( "#content" ).html(data);
 	});
 			}
